@@ -37,7 +37,7 @@ import ch.njol.skript.variables.Variables;
  */
 public class HorseData extends EntityData<Horse> {
 	static {
-		if (Skript.classExists("org.bukkit.entity.Horse")) {
+		if (Skript.isRunningMinecraft(1, 6)) {
 			register(HorseData.class, "horse", Horse.class, 0, "horse", "donkey", "mule", "undead horse", "skeleton horse");
 			
 			Variables.yggdrasil.registerSingleClass(Variant.class, "Horse.Variant");

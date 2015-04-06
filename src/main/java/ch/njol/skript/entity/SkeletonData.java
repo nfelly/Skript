@@ -33,7 +33,7 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
  * @author Peter Güttinger
  */
 public class SkeletonData extends EntityData<Skeleton> {
-	private final static boolean hasWither = Skript.classExists("org.bukkit.entity.Skeleton.SkeletonType");
+	private final static boolean hasWither = Skript.isRunningMinecraft(1, 4);
 	static {
 		if (hasWither)
 			register(SkeletonData.class, "skeleton", Skeleton.class, 0, "skeleton", "wither skeleton");

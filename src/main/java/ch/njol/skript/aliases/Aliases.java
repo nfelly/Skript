@@ -55,8 +55,6 @@ import ch.njol.util.NonNullPair;
 import ch.njol.util.Setter;
 
 /**
- * FIXME rename
- * 
  * @author Peter Güttinger
  */
 @SuppressWarnings("deprecation")

@@ -38,10 +38,10 @@ import ch.njol.util.Math2;
 public abstract class HealthUtils {
 	private HealthUtils() {}
 	
-	private final static boolean supportsDoubles = Skript.methodExists(Damageable.class, "setHealth", double.class);
+	private final static boolean usesDoubles = Skript.isRunningMinecraft(1, 6);
 	private static Method getHealth, setHealth, getMaxHealth, setMaxHealth, damage;
 	static {
-		if (!supportsDoubles) {
+		if (!usesDoubles) {
 			try {
 				getHealth = Damageable.class.getDeclaredMethod("getHealth");
 				setHealth = Damageable.class.getDeclaredMethod("setHealth", int.class);
@@ -63,7 +63,7 @@ public abstract class HealthUtils {
 	public final static double getHealth(final LivingEntity e) {
 		if (e.isDead())
 			return 0;
-		if (supportsDoubles)
+		if (usesDoubles)
 			return e.getHealth() / 2;
 		try {
 			return ((Number) getHealth.invoke(e)).doubleValue() / 2;
@@ -82,7 +82,7 @@ public abstract class HealthUtils {
 	 * @param health The amount of hearts to set
 	 */
 	public final static void setHealth(final LivingEntity e, final double health) {
-		if (supportsDoubles) {
+		if (usesDoubles) {
 			e.setHealth(Math2.fit(0, health, getMaxHealth(e)) * 2);
 			return;
 		}
@@ -102,7 +102,7 @@ public abstract class HealthUtils {
 	 * @return How many hearts the entity can have at most
 	 */
 	public final static double getMaxHealth(final LivingEntity e) {
-		if (supportsDoubles)
+		if (usesDoubles)
 			return e.getMaxHealth() / 2;
 		try {
 			return ((Number) getMaxHealth.invoke(e)).doubleValue() / 2;
@@ -121,7 +121,7 @@ public abstract class HealthUtils {
 	 * @param health How many hearts the entity can have at most
 	 */
 	public final static void setMaxHealth(final LivingEntity e, final double health) {
-		if (supportsDoubles) {
+		if (usesDoubles) {
 			e.setMaxHealth(Math.max(Skript.EPSILON / 2, health * 2)); // 0 is not allowed, so just use a small value - smaller than Skript.EPSILON though to compare as 0
 			return;
 		}
@@ -145,7 +145,7 @@ public abstract class HealthUtils {
 			heal(e, -d);
 			return;
 		}
-		if (supportsDoubles) {
+		if (usesDoubles) {
 			e.damage(d * 2);
 			return;
 		}
@@ -174,7 +174,7 @@ public abstract class HealthUtils {
 	
 	private static Method getDamage, setDamage;
 	static {
-		if (!supportsDoubles) {
+		if (!usesDoubles) {
 			try {
 				getDamage = EntityDamageEvent.class.getDeclaredMethod("getDamage");
 				setDamage = EntityDamageEvent.class.getDeclaredMethod("setDamage", int.class);
@@ -187,7 +187,7 @@ public abstract class HealthUtils {
 	}
 	
 	public final static double getDamage(final EntityDamageEvent e) {
-		if (supportsDoubles)
+		if (usesDoubles)
 			return e.getDamage() / 2;
 		try {
 			return ((Number) getDamage.invoke(e)).doubleValue() / 2;
@@ -202,7 +202,7 @@ public abstract class HealthUtils {
 	}
 	
 	public final static void setDamage(final EntityDamageEvent e, final double damage) {
-		if (supportsDoubles) {
+		if (usesDoubles) {
 			e.setDamage(damage * 2);
 			return;
 		}

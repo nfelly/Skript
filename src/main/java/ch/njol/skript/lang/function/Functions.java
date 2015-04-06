@@ -40,7 +40,6 @@ import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.ParseContext;
 import ch.njol.skript.lang.SkriptParser;
-import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.NonNullPair;
@@ -64,22 +63,15 @@ public abstract class Functions {
 	@Nullable
 	public static ScriptFunction<?> currentFunction = null;
 	
-	final static Map<String, JavaFunction<?>> javaFunctions = new HashMap<String, JavaFunction<?>>();
 	final static Map<String, FunctionData> functions = new HashMap<String, FunctionData>();
 	
-	/**
-	 * @param function
-	 * @return The passed function
-	 */
-	public final static JavaFunction<?> registerFunction(final JavaFunction<?> function) {
+	public final static void registerFunction(final JavaFunction<?> function) {
 		Skript.checkAcceptRegistrations();
 		if (!function.name.matches(functionNamePattern))
 			throw new SkriptAPIException("Invalid function name '" + function.name + "'");
 		if (functions.containsKey(function.name))
 			throw new SkriptAPIException("Duplicate function " + function.name);
 		functions.put(function.name, new FunctionData(function));
-		javaFunctions.put(function.name, function);
-		return function;
 	}
 	
 	final static void registerCaller(final FunctionReference<?> r) {
@@ -88,7 +80,7 @@ public abstract class Functions {
 		d.calls.add(r);
 	}
 	
-	public final static String functionNamePattern = "[\\p{IsAlphabetic}][\\p{IsAlphabetic}\\p{IsDigit}_]*";
+	public final static String functionNamePattern = "[\\p{IsAlphabetic}_]+";
 	
 	@SuppressWarnings("null")
 	private final static Pattern functionPattern = Pattern.compile("function (" + functionNamePattern + ")\\((.*)\\)(?: :: (.+))?", Pattern.CASE_INSENSITIVE),
@@ -97,7 +89,6 @@ public abstract class Functions {
 	@SuppressWarnings("unchecked")
 	@Nullable
 	public final static Function<?> loadFunction(final SectionNode node) {
-		SkriptLogger.setNode(node);
 		final String definition = node.getKey();
 		assert definition != null;
 		final Matcher m = functionPattern.matcher(definition);
@@ -144,8 +135,8 @@ public abstract class Functions {
 			c = null;
 			p = null;
 		} else {
-			c = Classes.getClassInfoFromUserInput(returnType);
-			p = Utils.getEnglishPlural(returnType);
+			c = Classes.getClassInfoFromUserInput("" + returnType);
+			p = Utils.getEnglishPlural("" + returnType);
 			if (c == null)
 				c = Classes.getClassInfoFromUserInput(p.getFirst());
 			if (c == null) {
@@ -183,7 +174,7 @@ public abstract class Functions {
 	 * Remember to call {@link #validateFunctions()} after calling this
 	 * 
 	 * @param script
-	 * @return How many functions were removed
+	 * @return
 	 */
 	public final static int clearFunctions(final File script) {
 		int r = 0;
@@ -193,14 +184,8 @@ public abstract class Functions {
 			if (d.function instanceof ScriptFunction && script.equals(((ScriptFunction<?>) d.function).trigger.getScript())) {
 				iter.remove();
 				r++;
-				final Iterator<FunctionReference<?>> it = d.calls.iterator();
-				while (it.hasNext()) {
-					final FunctionReference<?> c = it.next();
-					if (script.equals(c.script))
-						it.remove();
-					else
-						toValidate.add(c);
-				}
+				for (final FunctionReference<?> c : d.calls)
+					toValidate.add(c);
 			}
 		}
 		return r;
@@ -212,25 +197,8 @@ public abstract class Functions {
 		toValidate.clear();
 	}
 	
-	/**
-	 * Clears all function calls and removes script functions.
-	 */
 	public final static void clearFunctions() {
-		final Iterator<FunctionData> iter = functions.values().iterator();
-		while (iter.hasNext()) {
-			final FunctionData d = iter.next();
-			if (d.function instanceof ScriptFunction)
-				iter.remove();
-			else
-				d.calls.clear();
-		}
-		assert toValidate.isEmpty() : toValidate;
-		toValidate.clear();
-	}
-	
-	@SuppressWarnings("null")
-	public static Iterable<JavaFunction<?>> getJavaFunctions() {
-		return javaFunctions.values();
+		functions.clear();
 	}
 	
 }

@@ -38,10 +38,8 @@ public abstract class PlayerChatEventHandler {
 	
 	private PlayerChatEventHandler() {}
 	
-	public final static boolean usesAsyncEvent = Skript.classExists("org.bukkit.event.player.AsyncPlayerChatEvent");
-	
 	public final static void registerChatEvent(final EventPriority priority, final EventExecutor executor, final boolean ignoreCancelled) {
-		if (Skript.classExists("org.bukkit.event.player.AsyncPlayerChatEvent"))
+		if (Skript.isRunningMinecraft(1, 3))
 			Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, new Listener() {}, priority, executor, Skript.getInstance(), ignoreCancelled);
 		else
 			Bukkit.getPluginManager().registerEvent(PlayerChatEvent.class, new Listener() {}, priority, executor, Skript.getInstance(), ignoreCancelled);

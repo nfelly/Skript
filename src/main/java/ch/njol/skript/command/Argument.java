@@ -164,4 +164,9 @@ public class Argument<T> {
 		return single;
 	}
 	
+//	private void readObject(final ObjectInputStream in) throws ClassNotFoundException, IOException {
+//		in.defaultReadObject();
+//		current = new WeakHashMap<Event, T[]>();
+//	}
+	
 }

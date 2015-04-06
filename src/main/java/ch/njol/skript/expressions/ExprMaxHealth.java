@@ -21,7 +21,6 @@
 
 package ch.njol.skript.expressions;
 
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,7 +29,6 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.bukkitutil.HealthUtils;
 import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.doc.Description;
-import ch.njol.skript.doc.Events;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
 import ch.njol.skript.doc.Since;
@@ -46,7 +44,6 @@ import ch.njol.skript.expressions.base.SimplePropertyExpression;
 		"spawn a giant",
 		"set the last spawned entity's max health to 1000"})
 @Since("2.0")
-@Events({"damage", "death"})
 public class ExprMaxHealth extends SimplePropertyExpression<LivingEntity, Double> {
 	static {
 		register(ExprMaxHealth.class, Double.class, "max[imum] health", "livingentities");
@@ -71,7 +68,7 @@ public class ExprMaxHealth extends SimplePropertyExpression<LivingEntity, Double
 	@Override
 	@Nullable
 	public Class<?>[] acceptChange(final ChangeMode mode) {
-		if (!Skript.methodExists(Damageable.class, "setMaxHealth")) {
+		if (!Skript.isRunningMinecraft(1, 6)) {
 			Skript.error("The max health of an entity can only be changed in Minecraft 1.6 and later");
 			return null;
 		}

@@ -54,7 +54,7 @@ public class YggdrasilSerializer<T extends YggdrasilSerializable> extends Serial
 	}
 	
 	@Override
-	public boolean canBeInstantiated() {
+	public boolean canBeInstantiated(final Class<? extends T> c) {
 		return true;
 	}
 	

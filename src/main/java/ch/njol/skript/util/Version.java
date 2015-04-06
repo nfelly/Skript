@@ -85,9 +85,7 @@ public class Version implements Serializable, Comparable<Version> {
 	}
 	
 	@Override
-	public int compareTo(final @Nullable Version other) {
-		if (other == null)
-			return 1;
+	public int compareTo(final Version other) {
 		for (int i = 0; i < version.length; i++) {
 			if (version[i] > other.version[i])
 				return 1;

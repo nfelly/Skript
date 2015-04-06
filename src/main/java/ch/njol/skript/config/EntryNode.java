@@ -23,8 +23,6 @@ package ch.njol.skript.config;
 
 import java.util.Map.Entry;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 /**
  * @author Peter Güttinger
  */
@@ -54,9 +52,7 @@ public class EntryNode extends Node implements Entry<String, String> {
 	}
 	
 	@Override
-	public String setValue(final @Nullable String v) {
-		if (v == null)
-			return value;
+	public String setValue(final String v) {
 		final String r = value;
 		value = v;
 		return r;

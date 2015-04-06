@@ -22,11 +22,14 @@
 package ch.njol.skript.command;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,7 +65,6 @@ import ch.njol.skript.log.LogEntry;
 import ch.njol.skript.log.ParseLogHandler;
 import ch.njol.skript.log.SkriptLogger;
 import ch.njol.skript.log.Verbosity;
-import ch.njol.skript.util.EmptyStacktraceException;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.StringUtils;
 import ch.njol.util.Validate;
@@ -150,8 +152,13 @@ public class ScriptCommand implements CommandExecutor {
 			return bukkitCommand;
 		} catch (final Exception e) {
 			Skript.outdatedError(e);
-			throw new EmptyStacktraceException();
+			throw new EmptyStackException();
 		}
+	}
+	
+	private void readObject(final ObjectInputStream in) throws ClassNotFoundException, IOException {
+		in.defaultReadObject();
+		setupBukkitCommand();
 	}
 	
 	@Override
@@ -311,7 +318,6 @@ public class ScriptCommand implements CommandExecutor {
 			try {
 				final Field topics = IndexHelpTopic.class.getDeclaredField("allTopics");
 				topics.setAccessible(true);
-				@SuppressWarnings("unchecked")
 				final ArrayList<HelpTopic> as = new ArrayList<HelpTopic>((Collection<HelpTopic>) topics.get(aliases));
 				for (final String alias : activeAliases) {
 					final HelpTopic at = new CommandAliasHelpTopic("/" + alias, "/" + getLabel(), help);
@@ -333,7 +339,6 @@ public class ScriptCommand implements CommandExecutor {
 			try {
 				final Field topics = IndexHelpTopic.class.getDeclaredField("allTopics");
 				topics.setAccessible(true);
-				@SuppressWarnings("unchecked")
 				final ArrayList<HelpTopic> as = new ArrayList<HelpTopic>((Collection<HelpTopic>) topics.get(aliases));
 				as.removeAll(helps);
 				topics.set(aliases, as);

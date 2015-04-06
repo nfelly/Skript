@@ -111,19 +111,11 @@ public abstract class Serializer<T> extends YggdrasilSerializer<T> {
 	 */
 	public abstract boolean mustSyncDeserialization();
 	
-	@Override
-	public boolean canBeInstantiated(final Class<? extends T> c) {
-		assert info != null && info.getC().isAssignableFrom(c);
-		return canBeInstantiated();
-	}
-	
 	/**
-	 * Returns whether the class should be instantiated using its nullary constructor or not. Return false if the class has no nullary constructor or if you do not have control
-	 * over the source of the class (e.g. if it's from an API).
-	 * <p>
-	 * You must override and use {@link #deserialize(Fields)} if this method returns false ({@link #deserialize(Object, Fields)} will no be used anymore in this case).
+	 * You must override and use {@link #deserialize(Fields)} if this method returns false.
 	 */
-	protected abstract boolean canBeInstantiated();
+	@Override
+	public abstract boolean canBeInstantiated(final Class<? extends T> c);
 	
 	@SuppressWarnings("unchecked")
 	@Override

@@ -262,7 +262,6 @@ public abstract class Classes {
 	 * @param c The exact class to get the class info for
 	 * @return The class info for the given class of null if no info was found.
 	 */
-	@SuppressWarnings("unchecked")
 	@Nullable
 	public static <T> ClassInfo<T> getExactClassInfo(final @Nullable Class<T> c) {
 		return (ClassInfo<T>) exactClassInfos.get(c);
@@ -361,7 +360,7 @@ public abstract class Classes {
 	@Nullable
 	public static <T> DefaultExpression<T> getDefaultExpression(final Class<T> c) {
 		checkAllowClassInfoInteraction();
-		final ClassInfo<T> ci = getExactClassInfo(c);
+		final ClassInfo<T> ci = (ClassInfo<T>) exactClassInfos.get(c);
 		return ci == null ? null : ci.getDefaultExpression();
 	}
 	
@@ -396,7 +395,6 @@ public abstract class Classes {
 				if (parser == null || !parser.canParse(context) || !c.isAssignableFrom(info.getC()))
 					continue;
 				log.clear();
-				@SuppressWarnings("unchecked")
 				final T t = (T) parser.parse(s, context);
 				if (t != null) {
 					log.printLog();
@@ -492,7 +490,6 @@ public abstract class Classes {
 	 * @param c
 	 * @return A parser to parse object of the desired type
 	 */
-	@SuppressWarnings("unchecked")
 	@Nullable
 	public final static <T> Parser<? extends T> getExactParser(final Class<T> c) {
 		if (Skript.isAcceptRegistrations()) {
@@ -730,7 +727,7 @@ public abstract class Classes {
 	@Nullable
 	public final static Object deserialize(final ClassInfo<?> type, InputStream value) {
 		Serializer<?> s;
-		assert (s = type.getSerializer()) != null && (s.mustSyncDeserialization() ? Bukkit.isPrimaryThread() : true) : type + "; " + s + "; " + Bukkit.isPrimaryThread();
+		assert (s = type.getSerializer()) != null && (s.mustSyncDeserialization() ? Bukkit.isPrimaryThread() : true);
 		YggdrasilInputStream in = null;
 		try {
 			value = new SequenceInputStream(new ByteArrayInputStream(getYggdrasilStart(type)), value);

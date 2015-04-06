@@ -45,12 +45,13 @@ import ch.njol.util.Kleenean;
  * @author Peter Güttinger
  */
 @Name("Delay")
-@Description("Delays the script's execution by a given timespan. Please note that delays are not persistent, e.g. trying to create a tempban script with <code>ban player → wait 7 days → unban player</code> will not work if you restart your server anytime within these 7 days. You also have to be careful even when using small delays!")
+@Description("Delays the script's execution by a given timespan. Please note that delays are not persistent, e.g. trying to create a tempban script with <code>ban player → wait 7 days → unban player</code> will not work if you restart your server anytime within these 7 days. You also have to be careful even when using small delays! ")
 @Examples({"wait 2 minutes",
 		"halt for 5 minecraft hours",
 		"wait a tick"})
 @Since("1.4")
 public class Delay extends Effect {
+	
 	static {
 		Skript.registerEffect(Delay.class, "(wait|halt) [for] %timespan%");
 	}
@@ -89,7 +90,7 @@ public class Delay extends Effect {
 	}
 	
 	@SuppressWarnings("null")
-	protected final static Set<Event> delayed = Collections.newSetFromMap(new WeakHashMap<Event, Boolean>());
+	private final static Set<Event> delayed = Collections.newSetFromMap(new WeakHashMap<Event, Boolean>());
 	
 	public final static boolean isDelayed(final Event e) {
 		return delayed.contains(e);
