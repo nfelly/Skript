@@ -33,7 +33,7 @@ import ch.njol.skript.lang.Variable;
 import ch.njol.skript.util.Utils;
 import ch.njol.util.StringUtils;
 
-final class VariablesMap {
+public class VariablesMap {
 	
 	final static Comparator<String> variableNameComparator = new Comparator<String>() {
 		@Override
