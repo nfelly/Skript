@@ -122,7 +122,7 @@ public class SkriptClasses {
 					}
 					
 					@Override
-					public boolean canBeInstantiated() {
+					public boolean canBeInstantiated(final Class<? extends ClassInfo> c) {
 						return false;
 					}
 					

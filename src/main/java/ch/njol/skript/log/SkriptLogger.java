@@ -176,7 +176,7 @@ public abstract class SkriptLogger {
 			switch (r) {
 				case CACHED:
 					return;
-				case DO_NOT_LOG:
+				case DONT_LOG:
 					entry.discarded("denied by " + h);
 					return;
 				case LOG:

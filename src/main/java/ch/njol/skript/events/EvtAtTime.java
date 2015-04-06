@@ -21,6 +21,8 @@
 
 package ch.njol.skript.events;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +43,6 @@ import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Time;
-import ch.njol.util.Math2;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -107,13 +108,15 @@ public class EvtAtTime extends SelfRegisteringSkriptEvent implements Comparable<
 					final int tick = (int) e.getKey().getTime();
 					if (i.lastTick == tick) // stupid Bukkit scheduler
 						continue;
-					if (i.lastTick + CHECKPERIOD * 2 < tick || i.lastTick > tick && i.lastTick - 24000 + CHECKPERIOD * 2 < tick) { // time changed, e.g. by a command or plugin
-						i.lastTick = Math2.mod(tick - CHECKPERIOD, 24000);
+					if (i.lastTick + CHECKPERIOD * 2 < tick || i.lastTick > tick && i.lastTick - 24000 + CHECKPERIOD * 2 < tick) { // time changed
+						i.lastTick = tick - CHECKPERIOD;
+						if (i.lastTick < 0)
+							i.lastTick += 24000;
 					}
-					final boolean midnight = i.lastTick > tick; // actually 6:00
+					final boolean midnight = i.lastTick > tick;
 					if (midnight)
 						i.lastTick -= 24000;
-					final int startIndex = i.currentIndex;
+					final int lastIndex = i.currentIndex;
 					while (true) {
 						final EvtAtTime next = i.list.get(i.currentIndex);
 						final int nextTick = midnight && next.tick > 12000 ? next.tick - 24000 : next.tick;
@@ -122,7 +125,7 @@ public class EvtAtTime extends SelfRegisteringSkriptEvent implements Comparable<
 							i.currentIndex++;
 							if (i.currentIndex == i.list.size())
 								i.currentIndex = 0;
-							if (i.currentIndex == startIndex) // all events executed at once
+							if (i.currentIndex == lastIndex)
 								break;
 						} else {
 							break;
@@ -148,6 +151,20 @@ public class EvtAtTime extends SelfRegisteringSkriptEvent implements Comparable<
 		SkriptEventHandler.logEventEnd();
 	}
 	
+	@SuppressWarnings("null")
+	private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
+		if (worldNames != null) {
+			worlds = new World[worldNames.length];
+			for (int i = 0; i < worlds.length; i++) {
+				if ((worlds[i] = Bukkit.getWorld(worldNames[i])) == null)
+					throw new IOException();
+			}
+		} else {
+			worlds = Bukkit.getWorlds().toArray(new World[0]);
+		}
+	}
+	
 	@Override
 	public void register(final Trigger t) {
 		this.t = t;
@@ -171,8 +188,6 @@ public class EvtAtTime extends SelfRegisteringSkriptEvent implements Comparable<
 		while (iter.hasNext()) {
 			final EvtAtInfo i = iter.next();
 			i.list.remove(this);
-			if (i.currentIndex >= i.list.size())
-				i.currentIndex--;
 			if (i.list.isEmpty())
 				iter.remove();
 		}
@@ -195,8 +210,8 @@ public class EvtAtTime extends SelfRegisteringSkriptEvent implements Comparable<
 	}
 	
 	@Override
-	public int compareTo(final @Nullable EvtAtTime e) {
-		return e == null ? tick : tick - e.tick;
+	public int compareTo(final EvtAtTime e) {
+		return tick - e.tick;
 	}
 	
 }

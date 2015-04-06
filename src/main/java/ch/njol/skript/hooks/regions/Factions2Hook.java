@@ -51,7 +51,7 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.FactionColls;
 import com.massivecraft.factions.entity.UPlayer;
 import com.massivecraft.factions.listeners.FactionsListenerMain;
-import com.massivecraft.massivecore.ps.PS;
+import com.massivecraft.mcore.ps.PS;
 
 /**
  * @author Peter Güttinger
@@ -87,9 +87,6 @@ public class Factions2Hook extends RegionsPlugin<Factions> {
 		
 		private transient Faction faction;
 		
-		@SuppressWarnings({"null", "unused"})
-		private FactionsRegion() {}
-		
 		public FactionsRegion(final Faction f) {
 			faction = f;
 		}
@@ -113,19 +110,19 @@ public class Factions2Hook extends RegionsPlugin<Factions> {
 			final Collection<UPlayer> ps = faction.getUPlayers();
 			final Collection<OfflinePlayer> r = new ArrayList<OfflinePlayer>(ps.size());
 			for (final UPlayer p : ps)
-				r.add(Bukkit.getOfflinePlayer(p.getUuid()));
+				r.add(Bukkit.getOfflinePlayer(p.getName()));
 			return r;
 		}
 		
 		@Override
 		public boolean isOwner(final OfflinePlayer p) {
-			return faction.getLeader().getUuid().equals(p.getUniqueId());
+			return faction.getLeader().getName().equalsIgnoreCase(p.getName());
 		}
 		
 		@SuppressWarnings("null")
 		@Override
 		public Collection<OfflinePlayer> getOwners() {
-			return Arrays.asList(Bukkit.getOfflinePlayer(faction.getLeader().getUuid()));
+			return Arrays.asList(Bukkit.getOfflinePlayer(faction.getLeader().getName()));
 		}
 		
 		@Override

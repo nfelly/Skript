@@ -67,6 +67,7 @@ public class ExprEnchantmentLevel extends PropertyExpression<ItemType, Integer> 
 	}
 	
 	@Override
+	@Nullable
 	protected Integer[] get(final Event e, final ItemType[] source) {
 		final Enchantment ench = enchantment.getSingle(e);
 		if (ench == null)

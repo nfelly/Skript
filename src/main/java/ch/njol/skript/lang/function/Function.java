@@ -57,10 +57,6 @@ public abstract class Function<T> {
 		return parameters[index];
 	}
 	
-	public Parameter<?>[] getParameters() {
-		return parameters;
-	}
-	
 	@Nullable
 	public ClassInfo<T> getReturnType() {
 		return returnType;
@@ -79,16 +75,10 @@ public abstract class Function<T> {
 		return 0;
 	}
 	
-	public int getMaxParameters() {
+	public int getMaxParamaters() {
 		return parameters.length;
 	}
 	
-	// FIXME what happens with a delay in a function?
-	
-	/**
-	 * @param params An array with at least {@link #getMinParameters()} elements and at most {@link #getMaxParameters()} elements.
-	 * @return The result of the function
-	 */
 	@SuppressWarnings("null")
 	@Nullable
 	public final T[] execute(final Object[][] params) {
@@ -104,6 +94,10 @@ public abstract class Function<T> {
 			final Object[] val = i < params.length ? params[i] : p.def != null ? p.def.getArray(e) : null;
 			if (val == null || val.length == 0)
 				return null;
+			if (!p.type.getC().isAssignableFrom(val.getClass().getComponentType())) {
+				assert false : val.getClass() + "; " + p.type.getC();
+				return null;
+			}
 			ps[i] = val;
 		}
 		final T[] r = execute(e, ps);
@@ -113,8 +107,7 @@ public abstract class Function<T> {
 	
 	/**
 	 * @param e
-	 * @param params An array containing as many arrays as this function has parameters. The contained arrays are neither null nor empty, and are of type Object[] (i.e. not of the
-	 *            actual parameters' types).
+	 * @param params An array containing as many arrays as this function has parameters. The contained arrays are neither null nor empty.
 	 * @return Whatever this function is supposed to return. May be null or empty, but must not contain null elements.
 	 */
 	@Nullable

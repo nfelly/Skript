@@ -28,7 +28,6 @@ import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.Nullable;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.bukkitutil.PlayerUtils;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Examples;
 import ch.njol.skript.doc.Name;
@@ -70,7 +69,7 @@ public class EffBroadcast extends Effect {
 			final Expression<World> worlds = this.worlds;
 			if (worlds == null) {
 				// not Bukkit.broadcastMessage to ignore permissions
-				for (final Player p : PlayerUtils.getOnlinePlayers()) {
+				for (final Player p : Bukkit.getOnlinePlayers()) {
 					p.sendMessage(m);
 				}
 				Bukkit.getConsoleSender().sendMessage(m);

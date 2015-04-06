@@ -21,6 +21,8 @@
 
 package ch.njol.skript.lang;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -296,6 +298,11 @@ public class VariableString implements Expression<String> {
 			}
 		}
 		variableNames.put(name, pattern);
+	}
+	
+	private void readObject(final ObjectInputStream in) throws ClassNotFoundException, IOException {
+		in.defaultReadObject();
+		checkVariableConflicts(Utils.replaceChatStyles("" + orig.replace("\"\"", "\"")), mode, string == null ? null : Arrays.asList(string));
 	}
 	
 	/**
@@ -607,5 +614,5 @@ public class VariableString implements Expression<String> {
 			}
 		}
 	}
-	 */
+	*/
 }

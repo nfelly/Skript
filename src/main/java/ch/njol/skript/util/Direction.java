@@ -65,6 +65,7 @@ public class Direction implements YggdrasilRobustSerializable {
 	
 	public final static BlockFace BF_X = findFace(1, 0, 0), BF_Y = findFace(0, 1, 0), BF_Z = findFace(0, 0, 1);
 	
+	@SuppressWarnings("null")
 	private final static BlockFace findFace(final int x, final int y, final int z) {
 		for (final BlockFace f : BlockFace.values()) {
 			if (f.getModX() == x && f.getModY() == y && f.getModZ() == z)
@@ -387,11 +388,10 @@ public class Direction implements YggdrasilRobustSerializable {
 			protected Location[] get(final Event e) {
 				final Direction[] ds = dirs.getArray(e);
 				final Location[] ls = locs.getArray(e);
-				final Location[] r = ls; //ds.length == 1 ? ls : new Location[ds.length * ls.length];
+				final Location[] r = ds.length == 1 ? ls : new Location[ds.length * ls.length];
 				for (int i = 0; i < ds.length; i++) {
 					for (int j = 0; j < ls.length; j++) {
-//						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
-						r[j] = ds[i].getRelative(r[j]);
+						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
 					}
 				}
 				return r;
@@ -402,11 +402,10 @@ public class Direction implements YggdrasilRobustSerializable {
 			public Location[] getAll(final Event e) {
 				final Direction[] ds = dirs.getAll(e);
 				final Location[] ls = locs.getAll(e);
-				final Location[] r = ls; //ds.length == 1 ? ls : new Location[ds.length * ls.length];
+				final Location[] r = ds.length == 1 ? ls : new Location[ds.length * ls.length];
 				for (int i = 0; i < ds.length; i++) {
 					for (int j = 0; j < ls.length; j++) {
-//						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
-						r[j] = ds[i].getRelative(r[j]);
+						r[i + j * ds.length] = ds[i].getRelative(ls[j]);
 					}
 				}
 				return r;
@@ -414,14 +413,12 @@ public class Direction implements YggdrasilRobustSerializable {
 			
 			@Override
 			public boolean getAnd() {
-//				return (dirs.isSingle() || dirs.getAnd()) && (locs.isSingle() || locs.getAnd());
-				return locs.getAnd();
+				return (dirs.isSingle() || dirs.getAnd()) && (locs.isSingle() || locs.getAnd());
 			}
 			
 			@Override
 			public boolean isSingle() {
-//				return dirs.isSingle() && locs.isSingle();
-				return locs.isSingle();
+				return dirs.isSingle() && locs.isSingle();
 			}
 			
 			@Override

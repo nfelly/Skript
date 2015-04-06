@@ -56,7 +56,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
-import ch.njol.skript.bukkitutil.PlayerUtils;
 import ch.njol.skript.util.Task;
 
 // Copied to have this source available as mcstats' Maven repo does neither provide the source nor any Javadocs
@@ -345,7 +344,7 @@ public class Metrics {
 		final boolean onlineMode = Bukkit.getServer().getOnlineMode(); // TRUE if online mode is enabled
 		final String pluginVersion = description.getVersion();
 		final String serverVersion = Bukkit.getVersion();
-		final int playersOnline = PlayerUtils.getOnlinePlayers().size();
+		final int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
 		
 		// END server software specific section -- all code below does not use any code outside of this class / Java
 		
